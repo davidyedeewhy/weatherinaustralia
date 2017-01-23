@@ -21,6 +21,12 @@ class Weather_in_AustraliaTests: XCTestCase {
         super.tearDown()
     }
     
+    func testGeoLocation(){
+        let location = GeoLocation(lat: 28.08, lon: -80.61)
+        
+        print(location.lat!)
+    }
+    
     // test OpenWeatherMap web service
     func testWeatherWebService() {
         let expectation = self.expectation(description: "Expectations")
@@ -37,7 +43,7 @@ class Weather_in_AustraliaTests: XCTestCase {
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        print(weatherData)
+                        print((weatherData as! NSDictionary).value(forKeyPath: "main.temp")!)
                         
                         expectation.fulfill()
                     }
@@ -53,31 +59,26 @@ class Weather_in_AustraliaTests: XCTestCase {
             }
         }
     }
-    
-    func testWeatherClient(){
-        let expectation = self.expectation(description: "Expectations")
-        
-        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
-        let cityId = 4163971
-        
-        let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: apiKey, units: "metric")
-        //weatherClient//.requestWeather(currentWeather: "http://api.openweathermap.org/data/2.5/weather?", withApiKey: apiKey, units: "metric", forCity: cityId)
-        
-        weatherClient.requestWeather(cityId: cityId) { (weather) in
-            if weather != nil{
-                print(weather!.temp!)
-                expectation.fulfill()
-            }
-        }
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { 
+
+//    func testWeatherClient(){
+//        let expectation = self.expectation(description: "Expectations")
+//        
+//        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
+//        //let cityId = 4163971
+//        
+//        //http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric&appid=b1b15e88fa797225412429c1c50c122a1
+//        let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/group?", appID: apiKey, units: Units.metric)
+//        //weatherClient//.requestWeather(currentWeather: "http://api.openweathermap.org/data/2.5/weather?", withApiKey: apiKey, units: "metric", forCity: cityId)
+//        
+//        weatherClient.requestWeatherForCitys(cityIds: [4163971, 2147714, 2174003]) { (cities) in
+//            print(cities!)
 //            expectation.fulfill()
 //        }
-        
-        waitForExpectations(timeout: 10) { (error) in
-            if error != nil{
-                print(error!)
-            }
-        }
-    }
+//        
+//        waitForExpectations(timeout: 60) { (error) in
+//            if error != nil{
+//                print(error!)
+//            }
+//        }
+//    }
 }

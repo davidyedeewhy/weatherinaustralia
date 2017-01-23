@@ -11,8 +11,9 @@ import UIKit
 class WeatherTableViewController: UITableViewController {
     // MARK: - properties
     
-    private var cities : [Weather]?
+    private var cities : [City]?
     private let cityIDs = [4163971, 2147714, 2174003]
+    private var activityIndicator : UIActivityIndicatorView?
 
     // MARK: - view life circle
     override func viewDidLoad() {
@@ -21,8 +22,23 @@ class WeatherTableViewController: UITableViewController {
         self.refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(requestWeathers), for: .valueChanged)
         
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator?.center = CGPoint(x: UIScreen.main.bounds.size.width / 2.0, y: UIScreen.main.bounds.size.height / 2.0)
+        view.addSubview(activityIndicator!)
+        activityIndicator?.startAnimating()
+        
         // MARK: load city weathers
         requestWeathers(sender: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "WeatherLoadingFinish"), object: nil, queue: OperationQueue.main) { (notification) in
+            self.refreshControl?.endRefreshing()
+            self.activityIndicator?.stopAnimating()
+            self.tableView.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,51 +48,24 @@ class WeatherTableViewController: UITableViewController {
     
     // MARK: - functions
     @objc private func requestWeathers(sender: AnyObject?){
-        if cities == nil{
-            cities = [Weather]()
-        }
-        
-        let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: "metric")
-        for cityID in cityIDs {
-            weatherClient.requestWeather(cityId: cityID, onComplete: { (weather) in
-                if weather != nil && self.cities!.contains(weather!) == false{
-                    self.cities!.append(weather!)
-                    
-                    self.cities?.sort(by: { (city1, city2) -> Bool in
-                        return city1.cityId < city2.cityId
-                    })
-                    
-                    OperationQueue.main.addOperation({
-                        self.tableView.reloadData()
-                    })
-                }
-            })
-        }
+        cities = [City]()
+        requestWeatherForCityIndex(index: 0)
     }
     
-//    private func requestWeatherForCity(cityIndex: Int){
-//        if cityIndex < cityIDs.count{
-//            let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: "metric")
-//            weatherClient.requestWeather(cityId: cityIDs[cityIndex], onComplete: { (weather) in
-//                if weather != nil && self.cities!.contains(weather!) == false{
-//                    self.cities!.append(weather!)
-//                    
-//                    self.cities?.sort(by: { (city1, city2) -> Bool in
-//                        return city1.cityId < city2.cityId
-//                    })
-//                    
-//                    OperationQueue.main.addOperation({
-//                        self.tableView.reloadData()
-//                        self.requestWeatherForCity(cityIndex: cityIndex + 1)
-//                    })
-//                }
-//            })
-//        }else{
-//            if self.refreshControl?.isRefreshing == true{
-//                self.refreshControl?.endRefreshing()
-//            }
-//        }
-//    }
+    private func requestWeatherForCityIndex(index: Int){
+        if index < cityIDs.count{
+            let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+            weatherClient.requestWeather(cityId: cityIDs[index], onComplete: { (city) in
+                if city != nil && self.cities!.contains(city!) == false{
+                    self.cities!.append(city!)
+                    self.requestWeatherForCityIndex(index: index + 1)
+                }
+                self.requestWeatherForCityIndex(index: index + 1)
+            })
+        }else{
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "WeatherLoadingFinish"), object: nil)
+        }
+    }
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -94,14 +83,21 @@ class WeatherTableViewController: UITableViewController {
         let city = cities![indexPath.row]
         cell.textLabel?.text = "\(city.name!)"
         
-        let attributedText = NSMutableAttributedString(string: "\(city.temp!)℃")
-        attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17)], range: NSMakeRange(0, "\(city.temp!)".characters.count))
-        attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 8), NSBaselineOffsetAttributeName:7], range: NSMakeRange("\(city.temp!)".characters.count,1))
-        cell.detailTextLabel?.attributedText = attributedText
-        
-        
-        
+        if city.weather != nil{
+            let attributedText = NSMutableAttributedString(string: "\(city.weather!.temp)\(city.weather!.tempSymbol)")
+            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17)], range: NSMakeRange(0, "\(city.weather!.temp)".characters.count))
+            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 10), NSBaselineOffsetAttributeName:7], range: NSMakeRange("\(city.weather!.temp)".characters.count,2))
+            cell.detailTextLabel?.attributedText = attributedText
+        }
+    
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let city = cities![indexPath.row]
+        let cityWeatherController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CityWeatherViewController") as! CityWeatherViewController
+        cityWeatherController.city = city
+        navigationController?.pushViewController(cityWeatherController, animated: true)
     }
 
 }

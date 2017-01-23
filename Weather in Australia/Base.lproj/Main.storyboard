@@ -54,6 +54,24 @@
             </objects>
             <point key="canvasLocation" x="1048.8" y="-154.27286356821591"/>
         </scene>
+        <!--City Weather View Controller-->
+        <scene sceneID="CtF-Kk-g2M">
+            <objects>
+                <viewController storyboardIdentifier="CityWeatherViewController" id="vZi-NM-fYL" customClass="CityWeatherViewController" customModule="Weather_in_Australia" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="tst-iW-wPI"/>
+                        <viewControllerLayoutGuide type="bottom" id="Q1o-U3-8iP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="beU-F9-vVw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RFr-6n-UWS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1852" y="-146"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="BfD-eI-gtK">
             <objects>
