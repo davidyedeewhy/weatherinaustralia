@@ -12,7 +12,7 @@ class Weather : NSObject {
     
     let cityId : Int
     var name : String?
-    var temp : Int?
+    var temp : Double?
     
     init(cityId: Int){
         self.cityId = cityId

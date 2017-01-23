@@ -85,7 +85,7 @@ class WeatherClient{
                         // 2. set city current temperature
                         if let main = dictionary.value(forKey: "main"){
                             if let temp = (main as! NSDictionary).value(forKey: "temp"){
-                                weather!.temp = Int("\(temp)")
+                                weather!.temp = Double("\(temp)")
                             }
                         }
                     }

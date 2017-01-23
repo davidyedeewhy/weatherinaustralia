@@ -10,6 +10,7 @@ import UIKit
 
 class WeatherTableViewController: UITableViewController {
     // MARK: - properties
+    
     private var cities : [Weather]?
     private let cityIDs = [4163971, 2147714, 2174003]
 
@@ -36,7 +37,7 @@ class WeatherTableViewController: UITableViewController {
         }
         
         let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: "metric")
-        for cityID in cityIDs{
+        for cityID in cityIDs {
             weatherClient.requestWeather(cityId: cityID, onComplete: { (weather) in
                 if weather != nil && self.cities!.contains(weather!) == false{
                     self.cities!.append(weather!)
@@ -45,13 +46,37 @@ class WeatherTableViewController: UITableViewController {
                         return city1.cityId < city2.cityId
                     })
                     
-                    OperationQueue.main.addOperation({ 
+                    OperationQueue.main.addOperation({
                         self.tableView.reloadData()
                     })
                 }
             })
         }
     }
+    
+//    private func requestWeatherForCity(cityIndex: Int){
+//        if cityIndex < cityIDs.count{
+//            let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: "metric")
+//            weatherClient.requestWeather(cityId: cityIDs[cityIndex], onComplete: { (weather) in
+//                if weather != nil && self.cities!.contains(weather!) == false{
+//                    self.cities!.append(weather!)
+//                    
+//                    self.cities?.sort(by: { (city1, city2) -> Bool in
+//                        return city1.cityId < city2.cityId
+//                    })
+//                    
+//                    OperationQueue.main.addOperation({
+//                        self.tableView.reloadData()
+//                        self.requestWeatherForCity(cityIndex: cityIndex + 1)
+//                    })
+//                }
+//            })
+//        }else{
+//            if self.refreshControl?.isRefreshing == true{
+//                self.refreshControl?.endRefreshing()
+//            }
+//        }
+//    }
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,7 +93,13 @@ class WeatherTableViewController: UITableViewController {
 
         let city = cities![indexPath.row]
         cell.textLabel?.text = "\(city.name!)"
-        cell.detailTextLabel?.text = "\(city.temp!)"
+        
+        let attributedText = NSMutableAttributedString(string: "\(city.temp!)℃")
+        attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17)], range: NSMakeRange(0, "\(city.temp!)".characters.count))
+        attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 8), NSBaselineOffsetAttributeName:7], range: NSMakeRange("\(city.temp!)".characters.count,1))
+        cell.detailTextLabel?.attributedText = attributedText
+        
+        
         
         return cell
     }
