@@ -15,6 +15,8 @@
 		7BA1A0E71E35D60000B7439E /* Weather_in_AustraliaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA1A0E61E35D60000B7439E /* Weather_in_AustraliaTests.swift */; };
 		7BA1A0F21E35D60000B7439E /* Weather_in_AustraliaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA1A0F11E35D60000B7439E /* Weather_in_AustraliaUITests.swift */; };
 		7BA1A1001E35D6A100B7439E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7BA1A0FF1E35D6A100B7439E /* README.md */; };
+		7BA56CE21E35ED76003B82D2 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA56CE11E35ED76003B82D2 /* Weather.swift */; };
+		7BA56CE41E35F01D003B82D2 /* WeatherClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA56CE31E35F01D003B82D2 /* WeatherClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		7BA1A0F11E35D60000B7439E /* Weather_in_AustraliaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather_in_AustraliaUITests.swift; sourceTree = "<group>"; };
 		7BA1A0F31E35D60000B7439E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7BA1A0FF1E35D6A100B7439E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		7BA56CE11E35ED76003B82D2 /* Weather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		7BA56CE31E35F01D003B82D2 /* WeatherClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,9 @@
 		7BA1A0D01E35D5FF00B7439E /* Weather in Australia */ = {
 			isa = PBXGroup;
 			children = (
+				7BA56CE01E35ED5D003B82D2 /* Models */,
+				7BA56CDF1E35ED57003B82D2 /* Views */,
+				7BA56CDE1E35ED4D003B82D2 /* Controllers */,
 				7BA1A0D11E35D5FF00B7439E /* AppDelegate.swift */,
 				7BA1A0D31E35D5FF00B7439E /* ViewController.swift */,
 				7BA1A0D51E35D5FF00B7439E /* Main.storyboard */,
@@ -126,6 +133,29 @@
 				7BA1A0F31E35D60000B7439E /* Info.plist */,
 			);
 			path = "Weather in AustraliaUITests";
+			sourceTree = "<group>";
+		};
+		7BA56CDE1E35ED4D003B82D2 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		7BA56CDF1E35ED57003B82D2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		7BA56CE01E35ED5D003B82D2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7BA56CE11E35ED76003B82D2 /* Weather.swift */,
+				7BA56CE31E35F01D003B82D2 /* WeatherClient.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,7 +297,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BA1A0D41E35D5FF00B7439E /* ViewController.swift in Sources */,
+				7BA56CE41E35F01D003B82D2 /* WeatherClient.swift in Sources */,
 				7BA1A0D21E35D5FF00B7439E /* AppDelegate.swift in Sources */,
+				7BA56CE21E35ED76003B82D2 /* Weather.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

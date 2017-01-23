@@ -54,4 +54,30 @@ class Weather_in_AustraliaTests: XCTestCase {
         }
     }
     
+    func testWeatherClient(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
+        let cityId = 4163971
+        
+        let weatherClient = WeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: apiKey, units: "metric")
+        //weatherClient//.requestWeather(currentWeather: "http://api.openweathermap.org/data/2.5/weather?", withApiKey: apiKey, units: "metric", forCity: cityId)
+        
+        weatherClient.requestWeather(cityId: cityId) { (weather) in
+            if weather != nil{
+                print(weather!.temp!)
+                expectation.fulfill()
+            }
+        }
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { 
+//            expectation.fulfill()
+//        }
+        
+        waitForExpectations(timeout: 10) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+    }
 }
