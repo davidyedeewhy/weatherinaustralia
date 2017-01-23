@@ -76,10 +76,13 @@ class WeatherClient{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         weather = Weather(cityId: cityId)
                         let dictionary = weatherData as! NSDictionary
+                        
+                        // 1. set city name
                         if let name = dictionary.value(forKey: "name"){
-                            
                             weather!.name = "\(name)"
                         }
+                        
+                        // 2. set city current temperature
                         if let main = dictionary.value(forKey: "main"){
                             if let temp = (main as! NSDictionary).value(forKey: "temp"){
                                 weather!.temp = Int("\(temp)")

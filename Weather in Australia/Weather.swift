@@ -8,13 +8,17 @@
 
 import Foundation
 
-class Weather {
+class Weather : NSObject {
     
-    var cityId : Int?
+    let cityId : Int
     var name : String?
     var temp : Int?
     
     init(cityId: Int){
         self.cityId = cityId
+    }
+    
+    override func isEqual(_ object: Any?) -> Bool {
+        return self.cityId == (object as! Weather).cityId
     }
 }
