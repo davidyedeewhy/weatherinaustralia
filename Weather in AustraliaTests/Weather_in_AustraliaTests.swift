@@ -21,15 +21,36 @@ class Weather_in_AustraliaTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    // test OpenWeatherMap web service
+    func testWeatherWebService() {
+        let expectation = self.expectation(description: "Expectations")
+        
+        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
+        let cityId = 4163971
+
+        let connection = "http://api.openweathermap.org/data/2.5/weather?id=\(cityId)&units=metric&APPID=\(apiKey)"
+        let url = URL(string: connection)
+        let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if error == nil && data != nil{
+                let httpResponse = response as! HTTPURLResponse
+                if httpResponse.statusCode == 200{
+                    if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
+                        print(weatherData)
+                        
+                        expectation.fulfill()
+                    }
+                }
+            }else{
+                print(error!)
+            }
+        }.resume()
+        
+        waitForExpectations(timeout: 10) { (error) in
+            if error != nil{
+                print(error!)
+            }
         }
     }
     

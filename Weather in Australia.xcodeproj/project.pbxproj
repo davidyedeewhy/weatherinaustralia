@@ -516,6 +516,7 @@
 				7BA1A0F81E35D60000B7439E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7BA1A0F91E35D60000B7439E /* Build configuration list for PBXNativeTarget "Weather in AustraliaTests" */ = {
 			isa = XCConfigurationList;
@@ -524,6 +525,7 @@
 				7BA1A0FB1E35D60000B7439E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7BA1A0FC1E35D60000B7439E /* Build configuration list for PBXNativeTarget "Weather in AustraliaUITests" */ = {
 			isa = XCConfigurationList;
@@ -532,6 +534,7 @@
 				7BA1A0FE1E35D60000B7439E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
