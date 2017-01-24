@@ -34,7 +34,7 @@ class Weather_in_AustraliaTests: XCTestCase {
         let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
         let cityId = 2174003 //[4163971, 2147714, 2174003]
 
-        let connection = "http://api.openweathermap.org/data/2.5/weather?id=\(cityId)&units=metric&APPID=\(apiKey)"
+        let connection = "http://api.openweathermap.org/data/2.5/weather?id=\(cityId)&units=\(Units.imperial.rawValue)&APPID=\(apiKey)"
         let url = URL(string: connection)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         

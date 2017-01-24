@@ -24,7 +24,9 @@ class CurrentWeatherClient{
         self.units = units
     }
     
-    // MARK: - Current weather data
+    // MARK: - request current weather data
+    
+    // MARK: request weather data by city ID
     func requestWeather(cityId : Int, onComplete complete: @escaping (City?)->()){
         let connectionString = String(format: "\(urlString)id=\(cityId)&units=\(units.rawValue)&APPID=\(appID)")
         let url = URL(string: connectionString)
@@ -36,56 +38,15 @@ class CurrentWeatherClient{
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        //city = City(cityId: cityId)
                         let dictionary = weatherData as! NSDictionary
                         
                         city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
-                        city!.dictionary = dictionary
-                        let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-                        city!.tempSymbol = symbol
                         
-                        // 1. set city name
-                        if let name = dictionary.value(forKey: "name"){
+                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
                             city!.name = "\(name)"
                         }
-//
-//                        if let clouds = dictionary.value(forKey: "clouds") as? NSDictionary{
-//                            city!.cloud = Cloud(all: Double("\(clouds.value(forKey: "all")!)")!)
-//                        }
-//                        
-//                        if let location = dictionary.value(forKey: "coord") as? NSDictionary{
-//                            city?.location = GeoLocation(lat: Double("\(location.value(forKey: "lat")!)")!, lon: Double("\(location.value(forKey: "lon")!)")!)
-//                        }
-//                        
-//                        if let main = dictionary.value(forKey: "main") as? NSDictionary{
-//                            let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-//                            city?.weather = Weather(humidity: Double("\(main.value(forKey: "humidity")!)")!,
-//                                                   pressure: Double("\(main.value(forKey: "pressure")!)")!,
-//                                                   temp: Double("\(main.value(forKey: "temp")!)")!,
-//                                                   tempMax: Double("\(main.value(forKey: "temp_max")!)")!,
-//                                                   tempMin: Double("\(main.value(forKey: "temp_min")!)")!,
-//                                                   tempSymbol: symbol)
-//                        }
-//                        
-//                        if let sys = dictionary.value(forKey: "sys") as? NSDictionary{
-//                            city?.weatherSys = WeatherSys(sunrise: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunrise")!)")!),
-//                                                         sunset: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunset")!)")!))
-//                        }
-//                        
-//                        if let wind = dictionary.value(forKey: "wind") as? NSDictionary{
-//                            city?.wind = Wind(deg: Double("\(wind.value(forKey: "deg")!)")!,
-//                                             speed: Double("\(wind.value(forKey: "speed")!)")!)
-//                        }
-//                        
-//                        if let weatherMains = dictionary.value(forKey: "weather") as? [NSDictionary]{
-//                            if weatherMains.count > 0{
-//                                let weatherMain = weatherMains[0]
-//                                
-//                                city?.weatherMain = WeatherMain(icon: "\(weatherMain.value(forKey: "icon")!)",
-//                                    mainDescription: "\(weatherMain.value(forKey: "description")!)",
-//                                    main: "\(weatherMain.value(forKey: "main")!)")
-//                            }
-//                        }
+                        city!.dictionary = dictionary
+                        city!.units = self.units
                     }
                 }
             }else{
@@ -95,8 +56,10 @@ class CurrentWeatherClient{
         }.resume()
     }
     
+    // MARK: request weather data by a group of city ID
     func requestWeatherForCitys(cityIds: [Int], onComplete complete: @escaping ([City]?)->()){
         
+        // build url request string
         let connectionString = NSMutableString()
         connectionString.append(urlString)
         connectionString.append("id=")
@@ -123,55 +86,14 @@ class CurrentWeatherClient{
                             var cities = [City]()
                             
                             for dictionary in (list as! [NSDictionary]){
-                                let city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
+                                let city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
                                 
                                 city.dictionary = dictionary
-                                let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-                                city.tempSymbol = symbol
-
-                                //1. set city name
-                                if let name = dictionary.value(forKey: "name"){
+                                if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
                                     city.name = "\(name)"
                                 }
-//
-//                                if let clouds = dictionary.value(forKey: "clouds") as? NSDictionary{
-//                                    city.cloud = Cloud(all: Double("\(clouds.value(forKey: "all")!)")!)
-//                                }
-//                                
-//                                if let location = dictionary.value(forKey: "coord") as? NSDictionary{
-//                                    city.location = GeoLocation(lat: Double("\(location.value(forKey: "lat")!)")!, lon: Double("\(location.value(forKey: "lon")!)")!)
-//                                }
-//                                
-//                                if let main = dictionary.value(forKey: "main") as? NSDictionary{
-//                                    let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-//                                    city.weather = Weather(humidity: Double("\(main.value(forKey: "humidity")!)")!,
-//                                                           pressure: Double("\(main.value(forKey: "pressure")!)")!,
-//                                                               temp: Double("\(main.value(forKey: "temp")!)")!,
-//                                                            tempMax: Double("\(main.value(forKey: "temp_max")!)")!,
-//                                                            tempMin: Double("\(main.value(forKey: "temp_min")!)")!,
-//                                                         tempSymbol: symbol)
-//                                }
-//                                
-//                                if let sys = dictionary.value(forKey: "sys") as? NSDictionary{
-//                                    city.weatherSys = WeatherSys(sunrise: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunrise")!)")!),
-//                                                                  sunset: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunset")!)")!))
-//                                }
-//                                
-//                                if let wind = dictionary.value(forKey: "wind") as? NSDictionary{
-//                                    city.wind = Wind(deg: Double("\(wind.value(forKey: "deg")!)")!,
-//                                                      speed: Double("\(wind.value(forKey: "speed")!)")!)
-//                                }
-//                                
-//                                if let weatherMains = dictionary.value(forKey: "weather") as? [NSDictionary]{
-//                                    if weatherMains.count > 0{
-//                                        let weatherMain = weatherMains[0]
-//                                        
-//                                        city.weatherMain = WeatherMain(icon: "\(weatherMain.value(forKey: "icon")!)",
-//                                            mainDescription: "\(weatherMain.value(forKey: "description")!)",
-//                                            main: "\(weatherMain.value(forKey: "main")!)")
-//                                    }
-//                                }
-                                
+                                city.units = self.units
+
                                 cities.append(city)
                             }
                             
@@ -185,11 +107,11 @@ class CurrentWeatherClient{
         }.resume()
     }
     
+    // MARK: request weather data by geo location
     func requestWeatherForCurrentLocation(location: CLLocationCoordinate2D, onComplete complete:  @escaping (City?)->()){
         
         let connectionString = String(format: "\(urlString)lat=%.2f&lon=%.2f&units=\(units.rawValue)&APPID=\(appID)", arguments:[location.latitude, location.longitude])
         print(connectionString)
-        //let str = connectionString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet(charactersIn: "-") as CharacterSet)
         let url = URL(string: connectionString)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         
@@ -199,58 +121,17 @@ class CurrentWeatherClient{
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        //city = City(cityId: cityId)
                         let dictionary = weatherData as! NSDictionary
                         
-                        city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
+                        city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
                         
                         // 1. set city name
-                        if let name = dictionary.value(forKey: "name"){
+                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
                             city!.name = "\(name)"
                         }
                         
                         city!.dictionary = dictionary
-                        
-                        let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-                        city!.tempSymbol = symbol
-                        
-//                        if let clouds = dictionary.value(forKey: "clouds") as? NSDictionary{
-//                            city!.cloud = Cloud(all: Double("\(clouds.value(forKey: "all")!)")!)
-//                        }
-//                        
-//                        if let location = dictionary.value(forKey: "coord") as? NSDictionary{
-//                            city?.location = GeoLocation(lat: Double("\(location.value(forKey: "lat")!)")!, lon: Double("\(location.value(forKey: "lon")!)")!)
-//                        }
-//                        
-//                        if let main = dictionary.value(forKey: "main") as? NSDictionary{
-//                            let symbol = self.units == Units.metric ? UnitTemperature.celsius.symbol : self.units == Units.imperial ? UnitTemperature.fahrenheit.symbol : ""
-//                            city?.weather = Weather(humidity: Double("\(main.value(forKey: "humidity")!)")!,
-//                                                    pressure: Double("\(main.value(forKey: "pressure")!)")!,
-//                                                    temp: Double("\(main.value(forKey: "temp")!)")!,
-//                                                    tempMax: Double("\(main.value(forKey: "temp_max")!)")!,
-//                                                    tempMin: Double("\(main.value(forKey: "temp_min")!)")!,
-//                                                    tempSymbol: symbol)
-//                        }
-//                        
-//                        if let sys = dictionary.value(forKey: "sys") as? NSDictionary{
-//                            city?.weatherSys = WeatherSys(sunrise: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunrise")!)")!),
-//                                                          sunset: Date.init(timeIntervalSince1970: TimeInterval("\(sys.value(forKey: "sunset")!)")!))
-//                        }
-//                        
-//                        if let wind = dictionary.value(forKey: "wind") as? NSDictionary{
-//                            city?.wind = Wind(deg: Double("\(wind.value(forKey: "deg")!)")!,
-//                                              speed: Double("\(wind.value(forKey: "speed")!)")!)
-//                        }
-//                        
-//                        if let weatherMains = dictionary.value(forKey: "weather") as? [NSDictionary]{
-//                            if weatherMains.count > 0{
-//                                let weatherMain = weatherMains[0]
-//                                
-//                                city?.weatherMain = WeatherMain(icon: "\(weatherMain.value(forKey: "icon")!)",
-//                                    mainDescription: "\(weatherMain.value(forKey: "description")!)",
-//                                    main: "\(weatherMain.value(forKey: "main")!)")
-//                            }
-//                        }
+                        city!.units = self.units
                     }
                 }
             }else{
@@ -259,13 +140,4 @@ class CurrentWeatherClient{
             complete(city)
         }.resume()
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

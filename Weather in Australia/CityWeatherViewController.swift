@@ -8,34 +8,7 @@
 
 import UIKit
 
-enum Weather : String{
-    case base = "base"
-    case id = "id"
-    case dt = "dt"
-    case mainhumidity = "main.humidity"
-    case maintemp_max = "main.temp_max"
-    case maintemp_min = "main.temp_min"
-    case maintemp = "main.temp"
-    case mainpressure = "main.pressure"
-    case coordlon = "coord.lon"
-    case coordlat = "coord.lat"
-    case windspeed = "wind.speed"
-    case winddeg = "wind.deg"
-    case sysid = "sys.id"
-    case sysmessage = "sys.message"
-    case syscountry = "sys.country"
-    case systype = "sys.type"
-    case syssunset = "sys.sunset"
-    case syssunrise = "sys.sunrise"
-    case weatherid = "weather.id"
-    case weathermain = "weather.main"
-    case weathericon = "weather.icon"
-    case weatherdescription = "weather.description"
-    case visibility = "visibility"
-    case cloudsall = "clouds.all"
-    case cod = "cod"
-    case name = "name"
-}
+
 
 class CityWeatherViewController: UIViewController {
     // MARK: - properties
@@ -66,6 +39,7 @@ class CityWeatherViewController: UIViewController {
         var y : CGFloat = 70
         let width = UIScreen.main.bounds.size.width
         
+        //city.name City name
         if let str = dictionary.value(forKeyPath: "\(Weather.name.rawValue)"){
             let labelText = UILabel(frame: CGRect(x: 0, y: y, width: width, height: 30))
             labelText.font = UIFont.systemFont(ofSize: 25)
@@ -75,6 +49,7 @@ class CityWeatherViewController: UIViewController {
             y = y + 30
         }
         
+        //Group of weather parameters (Rain, Snow, Extreme etc.)
         if let str = dictionary.value(forKeyPath: "\(Weather.weathermain.rawValue)"){
             let labelText = UILabel(frame: CGRect(x: 0, y: y, width: width, height: 22))
             labelText.font = UIFont.systemFont(ofSize: 19)
@@ -90,9 +65,12 @@ class CityWeatherViewController: UIViewController {
             labelText.textAlignment = .center
             
             let temp = String(format: "%.0f", arguments: [Double("\(str)")!])
-            let attributedText = NSMutableAttributedString(string: "\(temp)\(city!.tempSymbol!)")
+            
+            let symbol = city!.units! == Units.metric ? "\(UnitTemperature.celsius.symbol)" : "\(UnitTemperature.fahrenheit.symbol)"
+            
+            let attributedText = NSMutableAttributedString(string: "\(temp)\(symbol)")
             attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 48)], range: NSMakeRange(0, "\(temp)".characters.count))
-            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17), NSBaselineOffsetAttributeName:22], range: NSMakeRange("\(temp)".characters.count,city!.tempSymbol!.characters.count))
+            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17), NSBaselineOffsetAttributeName:22], range: NSMakeRange("\(temp)".characters.count,symbol.characters.count))
             labelText.attributedText = attributedText
             
             view.addSubview(labelText)
@@ -106,15 +84,8 @@ class CityWeatherViewController: UIViewController {
         y = y + 6
         
         if let str = dictionary.value(forKeyPath: "\(Weather.weatherdescription.rawValue)"){
-//            let labeltTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//            labeltTitle.text = "\(Weather.weatherdescription): "
-//            labeltTitle.textAlignment = .right
-//            view.addSubview(labeltTitle)
-            
             let labelText = UILabel()
             labelText.numberOfLines = 0
-            //labelText.frame = CGRect(x: width * 0.1, y: y, width: width * 0.8, height: CGFloat.greatestFiniteMagnitude)
-            // UILabel(frame: CGRect(x: width * 0.1, y: y, width: width * 0.8, height: 20))
             labelText.text = "Today - \((str as! NSArray)[0])"
             let size = labelText.sizeThatFits(CGSize(width: width * 0.8, height: CGFloat.greatestFiniteMagnitude))
             labelText.frame = CGRect(x: width * 0.1, y: y, width: width * 0.8, height: size.height)
@@ -178,8 +149,11 @@ class CityWeatherViewController: UIViewController {
             labeltTitle.textAlignment = .right
             view.addSubview(labeltTitle)
             
+            // Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.
+            let symbol = city!.units! == Units.metric ? "\(UnitSpeed.metersPerSecond.symbol)" : "\(UnitSpeed.milesPerHour.symbol)"
+            
             let labelText = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-            labelText.text = "  \(str) \(UnitSpeed.kilometersPerHour.symbol)"
+            labelText.text = "  \(str) \(symbol)"
             view.addSubview(labelText)
             y = y + 20
         }
@@ -189,194 +163,11 @@ class CityWeatherViewController: UIViewController {
             labeltTitle.text = "\(Weather.mainpressure): "
             labeltTitle.textAlignment = .right
             view.addSubview(labeltTitle)
-            
+
             let labelText = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
             labelText.text = "  \(str) \(UnitPressure.hectopascals.symbol)"
             view.addSubview(labelText)
             y = y + 20
         }
-        
-//        var keypaths = [String]()
-//
-//
-//        for key in dictionary.allKeys{
-//
-//
-//            if let object = dictionary.object(forKey: "\(key)") as? NSArray{
-//                if object.count > 0{
-//                    if let dictionary1 = object[0] as? NSDictionary{
-//                        for key1 in dictionary1.allKeys{
-//                            if let object1 = dictionary1.object(forKey: "\(key1)"){
-//                                let labeltTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                                labeltTitle.text = "\(key).\(key1): "
-//                                labeltTitle.textAlignment = .right
-//                                view.addSubview(labeltTitle)
-//                                
-//                                let labelText = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                                labelText.text = " \(object1)"
-//                                view.addSubview(labelText)
-//                                y = y + 20
-//
-//                                keypaths.append("\(key)\(key1) = \"\(key).\(key1)\"")
-//                            }
-//                        }
-//                    }
-//                }
-//                
-////
-////                print(_obj!);
-//                //var array = swiftarray.map({$0["key.path"]! as ObjectType})
-//            }else if let object = dictionary.object(forKey: "\(key)") as? NSDictionary{
-//                for key2 in object.allKeys{
-//                    if let object2 = object.object(forKey: "\(key2)"){
-//                        let labeltTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                        labeltTitle.text = "\(key).\(key2): "
-//                        labeltTitle.textAlignment = .right
-//                        view.addSubview(labeltTitle)
-//                        
-//                        let labelText = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                        labelText.text = " \(object2)"
-//                        view.addSubview(labelText)
-//                        y = y + 20
-//                        
-//                        keypaths.append("\(key)\(key2) = \"\(key).\(key2)\"")
-//                    }
-//                }
-//                
-//            }else if let object = dictionary.object(forKey: "\(key)"){
-//                let labeltTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labeltTitle.text = "\(key): "
-//                labeltTitle.textAlignment = .right
-//                view.addSubview(labeltTitle)
-//                
-//                let labelText = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelText.text = " \(object)"
-//                view.addSubview(labelText)
-//                y = y + 20
-//
-//                keypaths.append("\(key) = \"\(key)\"")
-//            }
-//        }
-//        
-//        for keypath in keypaths{
-//            print("case \(keypath)")
-//        }
-        //case metric = "metric"
-        
-        
-        
-//        if city != nil{
-//            if city!.weatherSys != nil{
-//                let labelSunriseTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelSunriseTitle.text = "Sunrise: "
-//                labelSunriseTitle.textAlignment = .right
-//                view.addSubview(labelSunriseTitle)
-//                
-//                let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "HH:mm"
-//
-//                let labelSunrise = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelSunrise.text = " \(dateFormatter.string(from: city!.weatherSys!.sunrise))"
-//                view.addSubview(labelSunrise)
-//                
-//                y = y + 20
-//                
-//                let labelSunsetTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelSunsetTitle.text = "Sunset: "
-//                labelSunsetTitle.textAlignment = .right
-//                view.addSubview(labelSunsetTitle)
-//                
-//                let labelSunset = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelSunset.text = " \(dateFormatter.string(from: city!.weatherSys!.sunset))"
-//                view.addSubview(labelSunset)
-//
-//                y = y + 20
-//            }
-//            
-//            if city!.cloud != nil{
-//                let labelCloudsTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelCloudsTitle.text = "Clouds: "
-//                labelCloudsTitle.textAlignment = .right
-//                view.addSubview(labelCloudsTitle)
-//                
-//                let labelpressure = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelpressure.text = String(format: " %.0f%@", arguments: [city!.cloud!.all, "%"])
-//                view.addSubview(labelpressure)
-//                
-//                y = y + 20
-//            }
-//            
-//            if city!.weather != nil{
-//                let labelHumidityTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelHumidityTitle.text = "Humidity: "
-//                labelHumidityTitle.textAlignment = .right
-//                view.addSubview(labelHumidityTitle)
-//                
-//                let labelHumidity = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelHumidity.text = String(format: " %.0f%@", arguments: [city!.weather!.humidity, "%"])
-//                view.addSubview(labelHumidity)
-//                
-//                y = y + 20
-//                
-//                let labelpressureTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelpressureTitle.text = "Pressure: "
-//                labelpressureTitle.textAlignment = .right
-//                view.addSubview(labelpressureTitle)
-//                
-//                let labelpressure = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelpressure.text = String(format: " %.0f", arguments: [city!.weather!.pressure])
-//                view.addSubview(labelpressure)
-//                
-//                y = y + 20
-//            }
-//            
-//            if city!.wind != nil{
-//                let labelDegTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelDegTitle.text = "deg: "
-//                labelDegTitle.textAlignment = .right
-//                view.addSubview(labelDegTitle)
-//                
-//                let labelDeg = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelDeg.text = String(format: " %.0f", arguments: [city!.wind!.deg])
-//                view.addSubview(labelDeg)
-//                
-//                y = y + 20
-//                
-//                let labelSpeedTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelSpeedTitle.text = "Speed: "
-//                labelSpeedTitle.textAlignment = .right
-//                view.addSubview(labelSpeedTitle)
-//                
-//                let labelpressure = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelpressure.text = String(format: " %.0f", arguments: [city!.wind!.speed])
-//                view.addSubview(labelpressure)
-//                
-//                y = y + 20
-//            }
-//            
-//            if city!.weatherMain != nil{
-//                let labelTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelTitle.text = "Description: "
-//                labelTitle.textAlignment = .right
-//                view.addSubview(labelTitle)
-//                
-//                let label = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                label.text = String(format: " %.0f", arguments: [city!.weatherMain!.mainDescription])
-//                view.addSubview(label)
-//                
-//                y = y + 20
-//                
-//                let labelSpeedTitle = UILabel(frame: CGRect(x: 0, y: y, width: width * 0.5, height: 20))
-//                labelSpeedTitle.text = "Main: "
-//                labelSpeedTitle.textAlignment = .right
-//                view.addSubview(labelSpeedTitle)
-//                
-//                let labelpressure = UILabel(frame: CGRect(x: width * 0.5, y: y, width: width * 0.5, height: 20))
-//                labelpressure.text = String(format: " %.0f", arguments: [city!.weatherMain!.main])
-//                view.addSubview(labelpressure)
-//                
-//                y = y + 20
-//            }
-//        }
     }
 }

@@ -109,9 +109,10 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         cell.textLabel?.text = "\(city.name!)"
         
         if let temp = city.dictionary!.value(forKeyPath: "main.temp"){
-            let attributedText = NSMutableAttributedString(string: "\(temp)\(city.tempSymbol!)")
+            let symbol = city.units! == Units.metric ? "\(UnitTemperature.celsius.symbol)" : "\(UnitTemperature.fahrenheit.symbol)"
+            let attributedText = NSMutableAttributedString(string: "\(temp)\(symbol)")
             attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17)], range: NSMakeRange(0, "\(temp)".characters.count))
-            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 10), NSBaselineOffsetAttributeName:7], range: NSMakeRange("\(temp)".characters.count,city.tempSymbol!.characters.count))
+            attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 10), NSBaselineOffsetAttributeName:7], range: NSMakeRange("\(temp)".characters.count,symbol.characters.count))
             cell.detailTextLabel?.attributedText = attributedText
         }
     }
