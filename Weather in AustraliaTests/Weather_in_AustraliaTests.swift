@@ -22,9 +22,9 @@ class Weather_in_AustraliaTests: XCTestCase {
     }
     
     func testGeoLocation(){
-        let location = GeoLocation(lat: 28.08, lon: -80.61)
+        //let location = GeoLocation(lat: 28.08, lon: -80.61)
         
-        print(location.lat!)
+        //print(location.lat!)
     }
     
     // test OpenWeatherMap web service
@@ -32,7 +32,7 @@ class Weather_in_AustraliaTests: XCTestCase {
         let expectation = self.expectation(description: "Expectations")
         
         let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
-        let cityId = 4163971
+        let cityId = 2174003 //[4163971, 2147714, 2174003]
 
         let connection = "http://api.openweathermap.org/data/2.5/weather?id=\(cityId)&units=metric&APPID=\(apiKey)"
         let url = URL(string: connection)
@@ -43,7 +43,7 @@ class Weather_in_AustraliaTests: XCTestCase {
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        print((weatherData as! NSDictionary).value(forKeyPath: "main.temp")!)
+                        print((weatherData as! NSDictionary))
                         
                         expectation.fulfill()
                     }
@@ -81,4 +81,5 @@ class Weather_in_AustraliaTests: XCTestCase {
 //            }
 //        }
 //    }
+    
 }

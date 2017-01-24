@@ -20,6 +20,9 @@ class City : NSObject{
     var weatherSys : WeatherSys?
     var weatherMain : WeatherMain?
     
+    var dictionary : NSDictionary?
+    var tempSymbol : String?
+    
     init(cityId: Int){
         self.cityId = cityId
     }
@@ -51,14 +54,14 @@ struct GeoLocation {
 //main.temp_max Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally). Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit.
 //main.sea_level Atmospheric pressure on the sea level, hPa
 //main.grnd_level Atmospheric pressure on the ground level, hPa
-struct Weather {
-    let humidity : Double
-    let pressure : Double
-    let temp : Double
-    let tempMax : Double
-    let tempMin : Double
-    let tempSymbol : String
-}
+//struct Weather {
+//    let humidity : Double
+//    let pressure : Double
+//    let temp : Double
+//    let tempMax : Double
+//    let tempMin : Double
+//    let tempSymbol : String
+//}
 
 // MARK: - wind
 //wind.speed Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.
