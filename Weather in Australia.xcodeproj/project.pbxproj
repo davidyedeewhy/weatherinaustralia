@@ -19,6 +19,10 @@
 		7BA56CE81E361311003B82D2 /* CityWeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA56CE71E361311003B82D2 /* CityWeatherViewController.swift */; };
 		7BA56CEA1E361942003B82D2 /* WeatherDetailUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA56CE91E361942003B82D2 /* WeatherDetailUIView.swift */; };
 		7BA56CEC1E361B6D003B82D2 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA56CEB1E361B6D003B82D2 /* City.swift */; };
+		7BEF65681E385779005C7BD4 /* WeatherConditionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF65671E385779005C7BD4 /* WeatherConditionClient.swift */; };
+		7BEF656A1E3861D0005C7BD4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BEF65691E3861D0005C7BD4 /* Default-568h@2x.png */; };
+		7BEF656C1E389F1F005C7BD4 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656B1E389F1F005C7BD4 /* Constant.swift */; };
+		7BEF656E1E38AEFC005C7BD4 /* GoogleMapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +61,10 @@
 		7BA56CE71E361311003B82D2 /* CityWeatherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityWeatherViewController.swift; sourceTree = "<group>"; };
 		7BA56CE91E361942003B82D2 /* WeatherDetailUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherDetailUIView.swift; sourceTree = "<group>"; };
 		7BA56CEB1E361B6D003B82D2 /* City.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		7BEF65671E385779005C7BD4 /* WeatherConditionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherConditionClient.swift; sourceTree = "<group>"; };
+		7BEF65691E3861D0005C7BD4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		7BEF656B1E389F1F005C7BD4 /* Constant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleMapClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +95,7 @@
 		7BA1A0C51E35D5FF00B7439E = {
 			isa = PBXGroup;
 			children = (
+				7BEF65691E3861D0005C7BD4 /* Default-568h@2x.png */,
 				7BA1A0FF1E35D6A100B7439E /* README.md */,
 				7BA1A0D01E35D5FF00B7439E /* Weather in Australia */,
 				7BA1A0E51E35D60000B7439E /* Weather in AustraliaTests */,
@@ -160,6 +169,9 @@
 			children = (
 				7BA56CEB1E361B6D003B82D2 /* City.swift */,
 				7BA56CE31E35F01D003B82D2 /* CurrentWeatherClient.swift */,
+				7BEF65671E385779005C7BD4 /* WeatherConditionClient.swift */,
+				7BEF656B1E389F1F005C7BD4 /* Constant.swift */,
+				7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -277,6 +289,7 @@
 				7BA1A0DC1E35D5FF00B7439E /* LaunchScreen.storyboard in Resources */,
 				7BA1A0D91E35D5FF00B7439E /* Assets.xcassets in Resources */,
 				7BA1A1001E35D6A100B7439E /* README.md in Resources */,
+				7BEF656A1E3861D0005C7BD4 /* Default-568h@2x.png in Resources */,
 				7BA1A0D71E35D5FF00B7439E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,10 +317,13 @@
 			files = (
 				7BA56CEA1E361942003B82D2 /* WeatherDetailUIView.swift in Sources */,
 				7BA56CE81E361311003B82D2 /* CityWeatherViewController.swift in Sources */,
+				7BEF65681E385779005C7BD4 /* WeatherConditionClient.swift in Sources */,
+				7BEF656C1E389F1F005C7BD4 /* Constant.swift in Sources */,
 				7BA56CE61E35FD6C003B82D2 /* WeatherTableViewController.swift in Sources */,
 				7BA56CE41E35F01D003B82D2 /* CurrentWeatherClient.swift in Sources */,
 				7BA1A0D21E35D5FF00B7439E /* AppDelegate.swift in Sources */,
 				7BA56CEC1E361B6D003B82D2 /* City.swift in Sources */,
+				7BEF656E1E38AEFC005C7BD4 /* GoogleMapClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +475,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = R2Z77PZJU2;
 				INFOPLIST_FILE = "Weather in Australia/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "bestau.Weather-in-Australia";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -472,6 +489,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = R2Z77PZJU2;
 				INFOPLIST_FILE = "Weather in Australia/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "bestau.Weather-in-Australia";
 				PRODUCT_NAME = "$(TARGET_NAME)";

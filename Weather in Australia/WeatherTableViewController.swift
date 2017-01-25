@@ -14,7 +14,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     // MARK: - properties
     private let locationManager = CLLocationManager()
     private var cities : [City]?
-    private let cityIDs = [4163971, 2147714, 2174003]
+    private let cityIDs = [4163971, 2147714, 2174003, 2158177]//2158177 city ID for Melbourne, AU
     private var activityIndicator : UIActivityIndicatorView?
     private var currenctLocation : CLLocationCoordinate2D?
 
@@ -55,7 +55,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         super.viewWillAppear(animated)
         
         // add observer for update weather finished
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "WeatherLoadingFinish"), object: nil, queue: OperationQueue.main) { (notification) in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil, queue: OperationQueue.main) { (notification) in
             self.refreshControl?.endRefreshing()
             self.activityIndicator?.stopAnimating()
             self.tableView.reloadData()
@@ -66,10 +66,11 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         super.viewWillDisappear(animated)
         
         // remove observer for update weather finished
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "WeatherLoadingFinish"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
     }
     
     // MARK: - functions
+    // request current location weather
     @IBAction func didTapAdd(sender: UIBarButtonItem){
         if currenctLocation != nil{
             let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
@@ -84,7 +85,28 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         }
     }
     
-    // MARK:
+    @IBAction func didTapCityName(sender: UIBarButtonItem){
+        let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+        weatherClient.requestWeatherForCity(name: "Shenyang,cn", onComplete: { (city) in
+            if city != nil && self.cities!.contains(city!) == false{
+                self.cities!.append(city!)
+                OperationQueue.main.addOperation({
+                    self.tableView.reloadData()
+                })
+            }
+        })
+    }
+    
+    // MARK: national flag representation by country code
+    private func emojiFlag(countryCode: String) -> String {
+        var string = ""
+        var country = countryCode.uppercased()
+        for uS in country.unicodeScalars {
+            string.append(_: "\(UnicodeScalar(127397 + uS.value)!)")
+        }
+        return string
+    }
+    
     @objc private func requestWeathers(sender: AnyObject?){
         requestWeatherForCityIndex(index: 0)
     }
@@ -94,21 +116,48 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         if index < cityIDs.count{
             let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
             weatherClient.requestWeather(cityId: cityIDs[index], onComplete: { (city) in
+                // if city collection doesn't contain object, then add to collection
                 if city != nil && self.cities!.contains(city!) == false{
                     self.cities!.append(city!)
                 }
                 self.requestWeatherForCityIndex(index: index + 1)
             })
         }else{
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "WeatherLoadingFinish"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
         }
     }
     
     private func configureCell(cell: UITableViewCell, forRow indexPath: IndexPath){
         let city = cities![indexPath.row]
-        cell.textLabel?.text = "\(city.name!)"
+        cell.textLabel?.numberOfLines = 2
+        cell.textLabel?.text = "\(emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n" //
         
-        if let temp = city.dictionary!.value(forKeyPath: "main.temp"){
+        if city.timezone != nil{
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = city.timezone!
+            dateFormatter.dateFormat = "HH:mm:ss"
+            cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+        } else if city.location != nil{
+            let client = GoogleMapClient()
+            client.requestTimezone(location: city.location!, timestamp: Date(), onComplete: { (timezone) in
+                if timezone != nil{
+                    city.timezone = timezone
+                    OperationQueue.main.addOperation({
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.timeZone = city.timezone!
+                        dateFormatter.dateFormat = "HH:mm:ss"
+                        cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+                        
+                        Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
+                            cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+                        })
+                    })
+                }
+            })
+        }
+        
+        if var temp = city.dictionary!.value(forKeyPath: "main.temp"){
+            temp = String(format: "%.0f", arguments: [Double("\(temp)")!])
             let symbol = city.units! == Units.metric ? "\(UnitTemperature.celsius.symbol)" : "\(UnitTemperature.fahrenheit.symbol)"
             let attributedText = NSMutableAttributedString(string: "\(temp)\(symbol)")
             attributedText.addAttributes([NSFontAttributeName: UIFont.systemFont(ofSize: 17)], range: NSMakeRange(0, "\(temp)".characters.count))
@@ -127,6 +176,10 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     }
 
     // MARK: - Table view delegates
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath)
         configureCell(cell: cell, forRow: indexPath)

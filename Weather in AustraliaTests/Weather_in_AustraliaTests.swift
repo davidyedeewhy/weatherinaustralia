@@ -82,4 +82,37 @@ class Weather_in_AustraliaTests: XCTestCase {
 //        }
 //    }
     
+    func testGoogleMapService(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let client = GoogleMapClient()
+        client.requestTimezone(location: GeoLocation(lat: 28.08,lon: -80.61), timestamp: Date()) { (dictionary) in
+            print(dictionary ?? "")
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 60) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+
+    }
+    
+    func testGoogleMapServiceAddress(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let client = GoogleMapClient()
+        client.requestAddress(location: GeoLocation(lat: 28.08,lon: -80.61)) { (dictionary) in
+            print(dictionary ?? "")
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 60) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+        
+    }
 }

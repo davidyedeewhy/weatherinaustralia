@@ -10,14 +10,14 @@
 import Foundation
 import CoreLocation
 
-class CurrentWeatherClient{
+class CurrentWeatherClient : NSObject{
     
     // MARK: - properties
     private let urlString : String
     private let appID : String
     private let units : Units
     
-    // MARK: - constructor
+    // MARK: - constructor. appID for consuming OpenWeatherMap webservice
     init(urlString : String, appID : String, units : Units){
         self.urlString = urlString
         self.appID = appID
@@ -39,7 +39,7 @@ class CurrentWeatherClient{
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         let dictionary = weatherData as! NSDictionary
-                        
+
                         city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
                         
                         if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
@@ -47,6 +47,14 @@ class CurrentWeatherClient{
                         }
                         city!.dictionary = dictionary
                         city!.units = self.units
+
+                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
+                            city!.countryCode = "\(countryCode)"
+                        }
+                        
+                        if let lat = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)")!)"),let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)")!)"){
+                            city!.location = GeoLocation(lat: lat, lon: lon)
+                        }
                     }
                 }
             }else{
@@ -59,7 +67,7 @@ class CurrentWeatherClient{
     // MARK: request weather data by a group of city ID
     func requestWeatherForCitys(cityIds: [Int], onComplete complete: @escaping ([City]?)->()){
         
-        // build url request string
+        // build url string for group request
         let connectionString = NSMutableString()
         connectionString.append(urlString)
         connectionString.append("id=")
@@ -93,6 +101,15 @@ class CurrentWeatherClient{
                                     city.name = "\(name)"
                                 }
                                 city.units = self.units
+                                
+                                if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
+                                    city.countryCode = "\(countryCode)"
+                                }
+                                
+                                if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
+                                    let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                                    city.location = GeoLocation(lat: lat, lon: lon)
+                                }
 
                                 cities.append(city)
                             }
@@ -111,7 +128,46 @@ class CurrentWeatherClient{
     func requestWeatherForCurrentLocation(location: CLLocationCoordinate2D, onComplete complete:  @escaping (City?)->()){
         
         let connectionString = String(format: "\(urlString)lat=%.2f&lon=%.2f&units=\(units.rawValue)&APPID=\(appID)", arguments:[location.latitude, location.longitude])
-        print(connectionString)
+        let url = URL(string: connectionString)
+        let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            var city : City?
+            if error == nil && data != nil{
+                let httpResponse = response as! HTTPURLResponse
+                if httpResponse.statusCode == 200{
+                    if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
+                        let dictionary = weatherData as! NSDictionary
+                        
+                        city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
+
+                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
+                            city!.name = "\(name)"
+                        }
+                        
+                        city!.dictionary = dictionary
+                        city!.units = self.units
+                        
+                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
+                            city!.countryCode = "\(countryCode)"
+                        }
+                        
+                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
+                            let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                            city!.location = GeoLocation(lat: lat, lon: lon)
+                        }
+                    }
+                }
+            }else{
+                print(error!)
+            }
+            complete(city)
+        }.resume()
+    }
+    
+    // MARK: request weather data by city name
+    func requestWeatherForCity(name: String, onComplete complete: @escaping (City?)->()){
+        let connectionString = String(format: "\(urlString)q=\(name)&units=\(units.rawValue)&APPID=\(appID)")//.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
         let url = URL(string: connectionString)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         
@@ -132,6 +188,15 @@ class CurrentWeatherClient{
                         
                         city!.dictionary = dictionary
                         city!.units = self.units
+                        
+                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
+                            city!.countryCode = "\(countryCode)"
+                        }
+                        
+                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
+                            let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                            city!.location = GeoLocation(lat: lat, lon: lon)
+                        }
                     }
                 }
             }else{
