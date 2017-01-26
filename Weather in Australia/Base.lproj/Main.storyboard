@@ -55,7 +55,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a4A-jA-qi3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1048.8" y="-154.27286356821591"/>
+            <point key="canvasLocation" x="876" y="-154"/>
         </scene>
         <!--City Weather View Controller-->
         <scene sceneID="CtF-Kk-g2M">
@@ -73,7 +73,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RFr-6n-UWS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1852" y="-146"/>
+            <point key="canvasLocation" x="1786" y="-154"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="BfD-eI-gtK">
@@ -91,7 +91,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W2j-ou-iIo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="109.59999999999999" y="-154.27286356821591"/>
+            <point key="canvasLocation" x="17" y="-154"/>
         </scene>
     </scenes>
 </document>

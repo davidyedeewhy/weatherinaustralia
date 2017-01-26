@@ -13,7 +13,6 @@ class WeatherConditionClient{
     // MARK: - request weather icon, no appID required
     func requestWeatherIcon(iconID: String, onComplete complete: @escaping (Data?)->()){
         let connectionString = String(format: "http://openweathermap.org/img/w/\(iconID).png")
-        print(connectionString)
         let url = URL(string: connectionString)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         

@@ -22,9 +22,9 @@ class Weather_in_AustraliaTests: XCTestCase {
     }
     
     func testGeoLocation(){
-        //let location = GeoLocation(lat: 28.08, lon: -80.61)
-        
-        //print(location.lat!)
+        let location = GeoLocation(lat: 28.08, lon: -80.61)
+        print(location.lat)
+        XCTAssertEqual(location.lat, 28.08)
     }
     
     // test OpenWeatherMap web service
@@ -44,7 +44,6 @@ class Weather_in_AustraliaTests: XCTestCase {
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         print((weatherData as! NSDictionary))
-                        
                         expectation.fulfill()
                     }
                 }
@@ -60,27 +59,27 @@ class Weather_in_AustraliaTests: XCTestCase {
         }
     }
 
-//    func testWeatherClient(){
-//        let expectation = self.expectation(description: "Expectations")
-//        
-//        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
-//        //let cityId = 4163971
-//        
-//        //http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric&appid=b1b15e88fa797225412429c1c50c122a1
-//        let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/group?", appID: apiKey, units: Units.metric)
-//        //weatherClient//.requestWeather(currentWeather: "http://api.openweathermap.org/data/2.5/weather?", withApiKey: apiKey, units: "metric", forCity: cityId)
-//        
-//        weatherClient.requestWeatherForCitys(cityIds: [4163971, 2147714, 2174003]) { (cities) in
-//            print(cities!)
-//            expectation.fulfill()
-//        }
-//        
-//        waitForExpectations(timeout: 60) { (error) in
-//            if error != nil{
-//                print(error!)
-//            }
-//        }
-//    }
+    func testWeatherClient(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
+        //let cityId = 4163971
+        
+        //http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric&appid=b1b15e88fa797225412429c1c50c122a1
+        let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/group?", appID: apiKey, units: Units.metric)
+        //weatherClient//.requestWeather(currentWeather: "http://api.openweathermap.org/data/2.5/weather?", withApiKey: apiKey, units: "metric", forCity: cityId)
+        
+        weatherClient.requestWeatherForCitys(cityIds: [4163971, 2147714, 2174003]) { (cities) in
+            print(cities!)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 60) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+    }
     
     func testGoogleMapService(){
         let expectation = self.expectation(description: "Expectations")
@@ -115,22 +114,22 @@ class Weather_in_AustraliaTests: XCTestCase {
         }
     }
     
-//    func testDailyForecast(){
-//        //http://api.openweathermap.org/data/2.5/forecast/daily?q=London&units=metric&cnt=1&appid=3fe25736cbd429e82dd9abb3afca0002
-//        let expectation = self.expectation(description: "Expectations")
-//        
-//        let client = DailyForecastClient(urlString: "http://api.openweathermap.org/data/2.5/forecast/daily?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
-//        let city = City(cityId: 2147714)
-//        city.name = "Sydney"
-//        
-//        client.requestDailyWeatherForecast(city: city, days: 1) { (result) in
-//            expectation.fulfill()
-//        }
-//        
-//        waitForExpectations(timeout: 60) { (error) in
-//            if error != nil{
-//                print(error!)
-//            }
-//        }
-//    }
+    func testDailyForecast(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let client = DailyForecastClient(urlString: "\(OpenWeatherMapService.fiveDaysForecast.rawValue)", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+        let city = City(cityId: 2147714)
+        city.name = "Sydney"
+        city.country = Country(countryCode: "AU", nationalFlag: "")
+        
+        client.requestDailyWeatherForecast(city: city, days: 1) { (result) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 60) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+    }
 }

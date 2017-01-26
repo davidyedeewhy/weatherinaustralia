@@ -37,16 +37,14 @@ class CurrentWeatherClient : NSObject{
             if error == nil && data != nil{
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
-                    if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        let dictionary = weatherData as! NSDictionary
-
-                        city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
+                    if let dictionary = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! NSDictionary{
+                        city = City(cityId: cityId)
                         
                         if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                             city!.name = "\(name)"
                         }
-                        city!.dictionary = dictionary
-                        city!.units = self.units
+                        let weather = Weather(dictionary: dictionary, withUnits: self.units)
+                        city!.currentWeather = weather
 
                         if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
                             city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
@@ -90,17 +88,16 @@ class CurrentWeatherClient : NSObject{
                 if httpResponse.statusCode == 200{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         if let list = (weatherData as! NSDictionary).value(forKey: "list"){
-                            
                             var cities = [City]()
                             
                             for dictionary in (list as! [NSDictionary]){
                                 let city = City(cityId: Int("\(dictionary.value(forKey: "\(WeatherKeypath.id.rawValue)")!)")!)
-                                
-                                city.dictionary = dictionary
+
                                 if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                                     city.name = "\(name)"
                                 }
-                                city.units = self.units
+                                let weather = Weather(dictionary: dictionary, withUnits: self.units)
+                                city.currentWeather = weather
                                 
                                 if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
                                     city.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
@@ -136,17 +133,16 @@ class CurrentWeatherClient : NSObject{
             if error == nil && data != nil{
                 let httpResponse = response as! HTTPURLResponse
                 if httpResponse.statusCode == 200{
-                    if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
-                        let dictionary = weatherData as! NSDictionary
-                        
+                    if let dictionary = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! NSDictionary{
+
                         city = City(cityId: Int("\(dictionary.value(forKey: "\(WeatherKeypath.id.rawValue)")!)")!)
 
                         if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                             city!.name = "\(name)"
                         }
-                        
-                        city!.dictionary = dictionary
-                        city!.units = self.units
+
+                        let weather = Weather(dictionary: dictionary, withUnits: self.units)
+                        city!.currentWeather = weather
                         
                         if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
                             city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
@@ -186,8 +182,8 @@ class CurrentWeatherClient : NSObject{
                             city!.name = "\(name)"
                         }
                         
-                        city!.dictionary = dictionary
-                        city!.units = self.units
+                        let weather = Weather(dictionary: dictionary, withUnits: self.units)
+                        city!.currentWeather = weather
                         
                         if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
                             city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))

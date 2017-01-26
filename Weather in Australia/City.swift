@@ -15,27 +15,26 @@ class City : NSObject{
     var name : String?
     var location : GeoLocation?
     var timezone : TimeZone?
-    var units : Units?
-    
-    // MARK: city's current weather data
-    var dictionary : NSDictionary?
+    var currentWeather : Weather?
     
     // MARK: - constructor
     init(cityId: Int){
         self.cityId = cityId
     }
-    
-    // MARK: - override nsobject method
+
+    // MARK: - override NSObject method
     override func isEqual(_ object: Any?) -> Bool {
         return self.cityId == (object as! City).cityId
     }
 }
 
+// MARK: - struct: country
 struct Country{
     let countryCode : String
     let nationalFlag : String
 }
 
+// MARK: - struct: GeoLocation
 struct GeoLocation {
     let lat : Double
     let lon : Double

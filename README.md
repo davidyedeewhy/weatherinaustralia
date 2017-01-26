@@ -23,14 +23,14 @@ Submission:
 
 ##############################
 Development notes
-1. create project and remote git repository (https://github.com/davidyedeewhy/weatherinaustralia.git). Push the project to git
-2. sign up to OpenWeatherMap and get an api key
-3. create unit test for web service consume
-4. setup app transport security, add exception for domain (api.openweathermap.org)
-5. add file group for MVC
-6. create models for project
-7. create controller 
-8. consume web service with model
-9. update and style table cell
+- 1. create project and remote git repository (https://github.com/davidyedeewhy/weatherinaustralia.git). Push the project to git
+- 2. sign up to OpenWeatherMap and get an api key
+- 3. create unit test for web service consume
+- 4. setup app transport security, add exception for domain (api.openweathermap.org)
+- 5. add file group for MVC
+- 6. create models for project
+- 7. create controller 
+- 8. consume web service with model
+- 9. update and style table cell
 
 ##############################

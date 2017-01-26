@@ -35,7 +35,6 @@ class GoogleMapClient{
         }.resume()
     }
     
-    //https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=YOUR_API_KEY
     func requestAddress(location: GeoLocation, complete: @escaping (String?)->()){
         let connectionString = String(format: "\(addressRequestString)latlng=\(location.lat),\(location.lon)&key=\(ServiceKey.GoogleMap.rawValue)")
         let url = URL(string: connectionString)

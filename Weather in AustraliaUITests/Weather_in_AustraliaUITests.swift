@@ -29,8 +29,21 @@ class Weather_in_AustraliaUITests: XCTestCase {
     }
     
     func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        let app = XCUIApplication()
+
+        let tablesQuery = app.tables
+        tablesQuery.staticTexts["16°C"].tap()
+        
+        let backButton = app.navigationBars["Weather_in_Australia.CityWeatherView"].children(matching: .button).matching(identifier: "Back").element(boundBy: 0)
+        backButton.tap()
+        tablesQuery.staticTexts["23°C"].tap()
+        backButton.tap()
+        tablesQuery.staticTexts["22°C"].tap()
+        backButton.tap()
+        tablesQuery.staticTexts["20°C"].tap()
+        backButton.tap()
+        
     }
     
 }
