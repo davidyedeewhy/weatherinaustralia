@@ -34,3 +34,12 @@ Development notes
 - 9. update and style table cell
 ##############################
 
+
+##############################
+About the project:
+- 1. according to the requirement, the app should display some cities weather. One city ID is Melbourne in U.S, not in Australia. I have to request Google Map Service and setup timezone for city. otherwise, the sunrise and sunset time looks so funny.
+- 2. OpenWeatherMap provides current weather service with max and min temperature at the moment, not daily. I try to consume the other forecast service, but the response is still weird. Finally, I just display current max and min temperature at the location
+- 3. OpenWeatherMap also provides a group weather request service, but sometimes it's really slow. so I choose the webservice to request city weather one by one.
+- 4. I add a segment control for user. so the user can switch the unit system between Metric and Imperial.
+##############################
+

@@ -81,6 +81,39 @@ class Weather_in_AustraliaTests: XCTestCase {
         }
     }
     
+    func testGroupCall(){
+        let expectation = self.expectation(description: "Expectations")
+        
+        let apiKey = "3fe25736cbd429e82dd9abb3afca0002"
+        //let cityId = 2174003 //[4163971, 2147714, 2174003]
+        
+        //http://api.openweathermap.org/data/2.5/group?id=524901,703448,2643743&units=metric
+        let connection = "http://api.openweathermap.org/data/2.5/group?id=4163971,2147714,2174003&units=\(Units.metric.rawValue)&APPID=\(apiKey)"
+        let url = URL(string: connection)
+        let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 60.0)
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if error == nil && data != nil{
+                let httpResponse = response as! HTTPURLResponse
+                if httpResponse.statusCode == 200{
+                    if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
+                        print((weatherData as! NSDictionary))
+                        expectation.fulfill()
+                    }
+                }
+            }else{
+                print(error!)
+            }
+            }.resume()
+        
+        waitForExpectations(timeout: 60) { (error) in
+            if error != nil{
+                print(error!)
+            }
+        }
+
+    }
+    
     func testGoogleMapService(){
         let expectation = self.expectation(description: "Expectations")
         
