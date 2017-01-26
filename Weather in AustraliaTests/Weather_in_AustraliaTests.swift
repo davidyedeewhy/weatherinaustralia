@@ -113,6 +113,24 @@ class Weather_in_AustraliaTests: XCTestCase {
                 print(error!)
             }
         }
-        
     }
+    
+//    func testDailyForecast(){
+//        //http://api.openweathermap.org/data/2.5/forecast/daily?q=London&units=metric&cnt=1&appid=3fe25736cbd429e82dd9abb3afca0002
+//        let expectation = self.expectation(description: "Expectations")
+//        
+//        let client = DailyForecastClient(urlString: "http://api.openweathermap.org/data/2.5/forecast/daily?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+//        let city = City(cityId: 2147714)
+//        city.name = "Sydney"
+//        
+//        client.requestDailyWeatherForecast(city: city, days: 1) { (result) in
+//            expectation.fulfill()
+//        }
+//        
+//        waitForExpectations(timeout: 60) { (error) in
+//            if error != nil{
+//                print(error!)
+//            }
+//        }
+//    }
 }

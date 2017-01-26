@@ -73,7 +73,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     // request current location weather
     @IBAction func didTapAdd(sender: UIBarButtonItem){
         if currenctLocation != nil{
-            let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+            let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
             weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { (city) in
                 if city != nil && self.cities!.contains(city!) == false{
                     self.cities!.append(city!)
@@ -86,7 +86,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     }
     
     @IBAction func didTapCityName(sender: UIBarButtonItem){
-        let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+        let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
         weatherClient.requestWeatherForCity(name: "Shenyang,cn", onComplete: { (city) in
             if city != nil && self.cities!.contains(city!) == false{
                 self.cities!.append(city!)
@@ -97,16 +97,6 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         })
     }
     
-    // MARK: national flag representation by country code
-    private func emojiFlag(countryCode: String) -> String {
-        var string = ""
-        var country = countryCode.uppercased()
-        for uS in country.unicodeScalars {
-            string.append(_: "\(UnicodeScalar(127397 + uS.value)!)")
-        }
-        return string
-    }
-    
     @objc private func requestWeathers(sender: AnyObject?){
         requestWeatherForCityIndex(index: 0)
     }
@@ -114,11 +104,15 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     // MARK: recursing for update weather for cities
     private func requestWeatherForCityIndex(index: Int){
         if index < cityIDs.count{
-            let weatherClient = CurrentWeatherClient(urlString: "http://api.openweathermap.org/data/2.5/weather?", appID: "3fe25736cbd429e82dd9abb3afca0002", units: Units.metric)
+            let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
             weatherClient.requestWeather(cityId: cityIDs[index], onComplete: { (city) in
                 // if city collection doesn't contain object, then add to collection
-                if city != nil && self.cities!.contains(city!) == false{
-                    self.cities!.append(city!)
+                if city != nil{
+                    if self.cities!.contains(city!) == false{
+                        self.cities!.append(city!)
+                    }else{
+                        
+                    }
                 }
                 self.requestWeatherForCityIndex(index: index + 1)
             })
@@ -130,13 +124,13 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     private func configureCell(cell: UITableViewCell, forRow indexPath: IndexPath){
         let city = cities![indexPath.row]
         cell.textLabel?.numberOfLines = 2
-        cell.textLabel?.text = "\(emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n" //
+        cell.textLabel?.text = "\(city.name!)\n"
         
         if city.timezone != nil{
             let dateFormatter = DateFormatter()
             dateFormatter.timeZone = city.timezone!
-            dateFormatter.dateFormat = "HH:mm:ss"
-            cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+            dateFormatter.dateFormat = "HH:mm"
+            cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
         } else if city.location != nil{
             let client = GoogleMapClient()
             client.requestTimezone(location: city.location!, timestamp: Date(), onComplete: { (timezone) in
@@ -145,11 +139,11 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
                     OperationQueue.main.addOperation({
                         let dateFormatter = DateFormatter()
                         dateFormatter.timeZone = city.timezone!
-                        dateFormatter.dateFormat = "HH:mm:ss"
-                        cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+                        dateFormatter.dateFormat = "HH:mm"
+                        cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
                         
                         Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
-                            cell.textLabel?.text = "\(self.emojiFlag(countryCode: "\(city.countryCode!)"))\(city.name!)\n\(dateFormatter.string(from: Date()))"
+                            cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
                         })
                     })
                 }

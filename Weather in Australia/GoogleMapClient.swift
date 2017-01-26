@@ -9,13 +9,12 @@
 import Foundation
 
 class GoogleMapClient{
-    private let googleAPIKey = "AIzaSyBI3lmA_X3F5Z9Gnwry7arG-eVD4tx-QoA"
     private let timezoneRequestString = "https://maps.googleapis.com/maps/api/timezone/json?"
     private let addressRequestString = "https://maps.googleapis.com/maps/api/geocode/json?"
     
     func requestTimezone(location: GeoLocation, timestamp: Date, onComplete complete:@escaping (TimeZone?)->()){
         let _timestamp = Int(timestamp.timeIntervalSince1970.rounded())
-        let connectionString = String(format: "\(timezoneRequestString)location=\(location.lat),\(location.lon)&timestamp=\(_timestamp)&key=\(googleAPIKey)")
+        let connectionString = String(format: "\(timezoneRequestString)location=\(location.lat),\(location.lon)&timestamp=\(_timestamp)&key=\(ServiceKey.GoogleMap.rawValue)")
         let url = URL(string: connectionString)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         
@@ -38,7 +37,7 @@ class GoogleMapClient{
     
     //https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=YOUR_API_KEY
     func requestAddress(location: GeoLocation, complete: @escaping (String?)->()){
-        let connectionString = String(format: "\(addressRequestString)latlng=\(location.lat),\(location.lon)&key=\(googleAPIKey)")
+        let connectionString = String(format: "\(addressRequestString)latlng=\(location.lat),\(location.lon)&key=\(ServiceKey.GoogleMap.rawValue)")
         let url = URL(string: connectionString)
         let request = URLRequest(url: url!, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 10.0)
         

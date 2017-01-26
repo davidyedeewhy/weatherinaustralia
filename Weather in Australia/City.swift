@@ -11,7 +11,7 @@ import Foundation
 class City : NSObject{
     // MARK: - properties
     let cityId : Int
-    var countryCode : String?
+    var country : Country?
     var name : String?
     var location : GeoLocation?
     var timezone : TimeZone?
@@ -31,7 +31,13 @@ class City : NSObject{
     }
 }
 
+struct Country{
+    let countryCode : String
+    let nationalFlag : String
+}
+
 struct GeoLocation {
     let lat : Double
     let lon : Double
 }
+

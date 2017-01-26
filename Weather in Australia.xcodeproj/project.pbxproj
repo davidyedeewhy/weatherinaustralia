@@ -23,6 +23,8 @@
 		7BEF656A1E3861D0005C7BD4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7BEF65691E3861D0005C7BD4 /* Default-568h@2x.png */; };
 		7BEF656C1E389F1F005C7BD4 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656B1E389F1F005C7BD4 /* Constant.swift */; };
 		7BEF656E1E38AEFC005C7BD4 /* GoogleMapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */; };
+		7BEF65701E3957A4005C7BD4 /* DailyForecastClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656F1E3957A4005C7BD4 /* DailyForecastClient.swift */; };
+		7BEF65721E39A1DC005C7BD4 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF65711E39A1DC005C7BD4 /* Weather.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		7BEF65691E3861D0005C7BD4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		7BEF656B1E389F1F005C7BD4 /* Constant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleMapClient.swift; sourceTree = "<group>"; };
+		7BEF656F1E3957A4005C7BD4 /* DailyForecastClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DailyForecastClient.swift; sourceTree = "<group>"; };
+		7BEF65711E39A1DC005C7BD4 /* Weather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +176,8 @@
 				7BEF65671E385779005C7BD4 /* WeatherConditionClient.swift */,
 				7BEF656B1E389F1F005C7BD4 /* Constant.swift */,
 				7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */,
+				7BEF656F1E3957A4005C7BD4 /* DailyForecastClient.swift */,
+				7BEF65711E39A1DC005C7BD4 /* Weather.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -316,7 +322,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BA56CEA1E361942003B82D2 /* WeatherDetailUIView.swift in Sources */,
+				7BEF65701E3957A4005C7BD4 /* DailyForecastClient.swift in Sources */,
 				7BA56CE81E361311003B82D2 /* CityWeatherViewController.swift in Sources */,
+				7BEF65721E39A1DC005C7BD4 /* Weather.swift in Sources */,
 				7BEF65681E385779005C7BD4 /* WeatherConditionClient.swift in Sources */,
 				7BEF656C1E389F1F005C7BD4 /* Constant.swift in Sources */,
 				7BA56CE61E35FD6C003B82D2 /* WeatherTableViewController.swift in Sources */,

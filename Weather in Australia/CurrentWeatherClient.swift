@@ -42,17 +42,17 @@ class CurrentWeatherClient : NSObject{
 
                         city = City(cityId: Int("\(dictionary.value(forKey: "id")!)")!)
                         
-                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
+                        if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                             city!.name = "\(name)"
                         }
                         city!.dictionary = dictionary
                         city!.units = self.units
 
-                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
-                            city!.countryCode = "\(countryCode)"
+                        if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
+                            city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
                         }
                         
-                        if let lat = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)")!)"),let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)")!)"){
+                        if let lat = Double("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlat.rawValue)")!)"),let lon = Double("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlon.rawValue)")!)"){
                             city!.location = GeoLocation(lat: lat, lon: lon)
                         }
                     }
@@ -94,20 +94,20 @@ class CurrentWeatherClient : NSObject{
                             var cities = [City]()
                             
                             for dictionary in (list as! [NSDictionary]){
-                                let city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
+                                let city = City(cityId: Int("\(dictionary.value(forKey: "\(WeatherKeypath.id.rawValue)")!)")!)
                                 
                                 city.dictionary = dictionary
-                                if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
+                                if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                                     city.name = "\(name)"
                                 }
                                 city.units = self.units
                                 
-                                if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
-                                    city.countryCode = "\(countryCode)"
+                                if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
+                                    city.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
                                 }
                                 
-                                if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
-                                    let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                                if let lat = Double(("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlat.rawValue)"))")),
+                                    let lon = Double("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlon.rawValue)"))"){
                                     city.location = GeoLocation(lat: lat, lon: lon)
                                 }
 
@@ -139,21 +139,21 @@ class CurrentWeatherClient : NSObject{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         let dictionary = weatherData as! NSDictionary
                         
-                        city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
+                        city = City(cityId: Int("\(dictionary.value(forKey: "\(WeatherKeypath.id.rawValue)")!)")!)
 
-                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
+                        if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                             city!.name = "\(name)"
                         }
                         
                         city!.dictionary = dictionary
                         city!.units = self.units
                         
-                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
-                            city!.countryCode = "\(countryCode)"
+                        if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
+                            city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
                         }
                         
-                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
-                            let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlat.rawValue)"))")),
+                            let lon = Double("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlon.rawValue)"))"){
                             city!.location = GeoLocation(lat: lat, lon: lon)
                         }
                     }
@@ -179,22 +179,22 @@ class CurrentWeatherClient : NSObject{
                     if let weatherData = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments){
                         let dictionary = weatherData as! NSDictionary
                         
-                        city = City(cityId: Int("\(dictionary.value(forKey: "\(Weather.id.rawValue)")!)")!)
+                        city = City(cityId: Int("\(dictionary.value(forKey: "\(WeatherKeypath.id.rawValue)")!)")!)
                         
                         // 1. set city name
-                        if let name = dictionary.value(forKey: "\(Weather.name.rawValue)"){
+                        if let name = dictionary.value(forKey: "\(WeatherKeypath.name.rawValue)"){
                             city!.name = "\(name)"
                         }
                         
                         city!.dictionary = dictionary
                         city!.units = self.units
                         
-                        if let countryCode = dictionary.value(forKeyPath: "\(Weather.syscountry.rawValue)"){
-                            city!.countryCode = "\(countryCode)"
+                        if let countryCode = dictionary.value(forKeyPath: "\(WeatherKeypath.syscountry.rawValue)"){
+                            city!.country = Country(countryCode: "\(countryCode)", nationalFlag: self.emojiFlag(countryCode: "\(countryCode)"))
                         }
                         
-                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(Weather.coordlat.rawValue)"))")),
-                            let lon = Double("\(dictionary.value(forKeyPath: "\(Weather.coordlon.rawValue)"))"){
+                        if let lat = Double(("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlat.rawValue)"))")),
+                            let lon = Double("\(dictionary.value(forKeyPath: "\(WeatherKeypath.coordlon.rawValue)"))"){
                             city!.location = GeoLocation(lat: lat, lon: lon)
                         }
                     }
@@ -204,5 +204,15 @@ class CurrentWeatherClient : NSObject{
             }
             complete(city)
         }.resume()
+    }
+    
+    // MARK: national flag representation by country code
+    private func emojiFlag(countryCode: String) -> String {
+        var string = ""
+        var country = countryCode.uppercased()
+        for uS in country.unicodeScalars {
+            string.append(_: "\(UnicodeScalar(127397 + uS.value)!)")
+        }
+        return string
     }
 }

@@ -8,12 +8,17 @@
 
 import Foundation
 
+enum ServiceKey : String{
+    case OpenWeatherMap = "3fe25736cbd429e82dd9abb3afca0002"
+    case GoogleMap = "AIzaSyBI3lmA_X3F5Z9Gnwry7arG-eVD4tx-QoA"
+}
+
 enum Units : String{
     case metric = "metric"
     case imperial = "imperial"
 }
 
-enum Weather : String{
+enum WeatherKeypath : String{
     case base = "base"
     case id = "id"
     case dt = "dt"
@@ -44,4 +49,17 @@ enum Weather : String{
 
 enum WeatherNotification{
     case WeatherLoadingFinish
+}
+
+enum OpenWeatherMapService : String{
+    //Access current weather data for any location on Earth including over 200,000 cities! Current weather is frequently updated based on global models and data from more than 40,000 weather stations. Data is available in JSON, XML, or HTML format.
+    case currentWeather = "http://api.openweathermap.org/data/2.5/weather?"
+    
+    case currentWeatherForCities = "http://api.openweathermap.org/data/2.5/group?"
+    
+    //5 day forecast is available at any location or city. It includes weather data every 3 hours. Forecast is available in JSON or XML format.
+    case fiveDaysForecast = "http://api.openweathermap.org/data/2.5/forecast?"
+    
+    //16 day forecasts is available at any location or city. Forecasts include daily weather and available in JSON or XML format.
+    case sixteenDailyForecast = "http://api.openweathermap.org/data/2.5/forecast/daily?"
 }
