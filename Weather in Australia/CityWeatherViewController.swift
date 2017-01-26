@@ -17,6 +17,7 @@ class CityWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //view.backgroundColor = UIColor(red: 0, green: 0, blue: 1, alpha: 0.4)
         if city != nil{
             configureView()
         }
@@ -30,9 +31,9 @@ class CityWeatherViewController: UIViewController {
     // MARK: - functions
     private func configureView(){
         // MARK: 1. set header view
-        let headerBackgroundView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: 180))
-        headerBackgroundView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
-        view.addSubview(headerBackgroundView)
+//        let headerBackgroundView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: 180))
+//        headerBackgroundView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2)
+//        view.addSubview(headerBackgroundView)
         
         var y : CGFloat = 70
         // MARK: 2. city name
@@ -62,11 +63,11 @@ class CityWeatherViewController: UIViewController {
         addMaxTemp(position: &y)
         addMinTemp(position: &y)
         
-        for subview in view.subviews{
-            if subview is UILabel{
-                (subview as! UILabel).textColor = UIColor.white
-            }
-        }
+//        for subview in view.subviews{
+//            if subview is UILabel{
+//                (subview as! UILabel).textColor = UIColor.white
+//            }
+//        }
     }
     
     private func addCityName(position y: inout CGFloat){
@@ -195,14 +196,14 @@ class CityWeatherViewController: UIViewController {
         }
         y = y + 20
         
-        if city!.currentWeather!.sunrise != nil && city!.currentWeather!.sunset != nil{
-            // MARK: change background to show day or night based on current time.
-            if Date() > city!.currentWeather!.sunrise! && Date() < city!.currentWeather!.sunset!{
-                view.backgroundColor = UIColor(patternImage: UIImage(named: "day.png")!)
-            }else{
-                view.backgroundColor = UIColor(patternImage: UIImage(named: "night.jpg")!)
-            }
-        }
+//        if city!.currentWeather!.sunrise != nil && city!.currentWeather!.sunset != nil{
+//            // MARK: change background to show day or night based on current time.
+//            if Date() > city!.currentWeather!.sunrise! && Date() < city!.currentWeather!.sunset!{
+//                view.backgroundColor = UIColor(red: 0, green: 0, blue: 1, alpha: 0.4)//UIColor(patternImage: UIImage(named: "day.png")!)
+//            }else{
+//                view.backgroundColor = UIColor(red: 0, green: 0, blue: 1, alpha: 0.4)//UIColor(patternImage: UIImage(named: "night.jpg")!)
+//            }
+//        }
     }
     
     private func addHumidity(position y: inout CGFloat){
