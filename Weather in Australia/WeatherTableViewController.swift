@@ -23,12 +23,35 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // MARK: add observer when view appear
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil, queue: OperationQueue.main) { (notification) in
+            self.refreshControl?.endRefreshing()
+            self.activityIndicator?.stopAnimating()
+            self.tableView.reloadData()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // MARK: remove observer when view disppear
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
+    }
+    
+    // MARK: - functions
+    private func configureView(){
         let width = view.bounds.size.width
         let height = view.bounds.size.height
         
         // MARK: 1. add bar button to add local weather
-        let addLocalButton = UIBarButtonItem(title: "Local", style: .plain, target: self, action: #selector(didTapAdd))
-        navigationItem.rightBarButtonItems = [addLocalButton]
+        let btnLocal = UIBarButtonItem(title: "Local", style: .plain, target: self, action: #selector(didTapAdd))
+        navigationItem.rightBarButtonItems = [btnLocal]
         
         // MARK: 2. setup CLLocationManager
         locationManager = CLLocationManager()
@@ -64,44 +87,26 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         requestWeatherForCityIndex()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // MARK: add observer when view appear
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil, queue: OperationQueue.main) { (notification) in
-            self.refreshControl?.endRefreshing()
-            self.activityIndicator?.stopAnimating()
-            self.tableView.reloadData()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // MARK: remove observer when view disppear
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
-    }
-    
-    // MARK: - functions
     @IBAction func didTapAdd(sender: UIBarButtonItem){
-        // MARK: request current location weather
-        guard currenctLocation != nil else{
+        // TODO: request current location weather
+        guard let _ = currenctLocation else{
+            // do something here
             return
         }
-        if currenctLocation != nil{
-            let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
-            weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { (city) in
-                guard let city = city else{
-                    return
-                }
-                if self.cities?.contains(city) == false{
-                    self.cities?.append(city)
-                    OperationQueue.main.addOperation({ 
-                        self.tableView.reloadData()
-                    })
-                }
-            })
-        }
+        
+        let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
+        weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { (city) in
+            guard let city = city else{
+                return
+            }
+            
+            if self.cities?.contains(city) == false{
+                self.cities?.append(city)
+                OperationQueue.main.addOperation({
+                    self.tableView.reloadData()
+                })
+            }
+        })
     }
     
     @IBAction func didTapCityName(sender: UIBarButtonItem){
@@ -127,10 +132,14 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
 
     private func requestWeatherForCityIndex(){
         // MARK: recursing for update weather for cities
-        for cityID in cityIDs{
-            let queue = OperationQueue()
-            weak var controller : WeatherTableViewController? = self
-            queue.addOperation({ 
+        let queue = DispatchQueue(label: "weatherRequest")
+        var totalRequest = 0
+        
+        for cityID in self.cityIDs{
+            //weak let controller : WeatherTableViewController? = self
+            queue.async(execute: { 
+                weak var controller : WeatherTableViewController? = self
+                
                 let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: self.units!)
                 weatherClient.requestWeather(cityId: cityID, onComplete: { (city) in
                     if city != nil{
@@ -145,16 +154,20 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
                                 existCity[0].currentWeather = city!.currentWeather
                             }
                         }
-                        
-                        OperationQueue.main.addOperation({ 
+
+                        DispatchQueue.main.async {
                             controller?.tableView.reloadData()
-                            print(queue.operationCount)
-                        })
+                            
+                            totalRequest += 1
+                            
+                            if totalRequest == (controller?.cityIDs.count)! - 1{
+                                controller?.refreshControl?.endRefreshing()
+                                controller?.activityIndicator?.stopAnimating()
+                            }
+                        }
                     }
                 })
             })
-            
-            queue.waitUntilAllOperationsAreFinished()
         }
     }
     
