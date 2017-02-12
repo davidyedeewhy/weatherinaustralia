@@ -77,15 +77,15 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         }
         
         let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
-        weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { (city) in
+        weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { [weak self](city) in
             guard let city = city else{
                 return
             }
             
-            if self.cities?.contains(city) == false{
-                self.cities?.append(city)
+            if self?.cities?.contains(city) == false{
+                self?.cities?.append(city)
                 OperationQueue.main.addOperation({
-                    self.tableView.reloadData()
+                    self?.tableView.reloadData()
                 })
             }
         })
@@ -94,15 +94,15 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     @IBAction func didTapCityName(sender: UIBarButtonItem){
         // MARK: request weather by city name
         let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
-        weatherClient.requestWeatherForCity(name: "Shenyang,cn", onComplete: { (city) in
+        weatherClient.requestWeatherForCity(name: "Shenyang,cn", onComplete: { [weak self](city) in
             guard let city = city else{
                 return
             }
             
-            if self.cities?.contains(city) == false{
-                self.cities?.append(city)
+            if self?.cities?.contains(city) == false{
+                self?.cities?.append(city)
                 OperationQueue.main.addOperation({
-                    self.tableView.reloadData()
+                    self?.tableView.reloadData()
                 })
             }
         })
@@ -151,9 +151,9 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         cell.textLabel?.numberOfLines = 2
         cell.textLabel?.text = "\(city.name!)\n"
         // MARK: display city's current time according to timezone
-        if city.timezone != nil{
+        if let timezone = city.timezone {
             let dateFormatter = DateFormatter()
-            dateFormatter.timeZone = city.timezone!
+            dateFormatter.timeZone = timezone
             dateFormatter.dateFormat = "HH:mm"
             // MARK: display country's flag to indicate cities with same name in different country
             cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
@@ -161,18 +161,18 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
                 cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
             })
-        } else if city.location != nil{
+        }else if let location = city.location{
             // MARK: get city's timezone by using Google Map Service
             let client = GoogleMapClient()
-            client.requestTimezone(location: city.location!, timestamp: Date(), onComplete: { (timezone) in
+            client.requestTimezone(location: location, timestamp: Date(), onComplete: { (timezone) in
                 if timezone != nil{
                     city.timezone = timezone
                     OperationQueue.main.addOperation({
                         let dateFormatter = DateFormatter()
-                        dateFormatter.timeZone = city.timezone!
+                        dateFormatter.timeZone = timezone
                         dateFormatter.dateFormat = "HH:mm"
                         cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
-
+                        
                         Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
                             cell.textLabel?.text = "\(city.country!.nationalFlag)\(city.name!)\n\(dateFormatter.string(from: Date()))"
                         })
@@ -180,7 +180,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
                 }
             })
         }
-        
+
         if let temp = city.currentWeather?.temperature{
             let tempString = String(format: "%.0f", arguments: [temp])
             let symbol = city.currentWeather!.units! == Units.metric ? "\(UnitTemperature.celsius.symbol)" : "\(UnitTemperature.fahrenheit.symbol)"
