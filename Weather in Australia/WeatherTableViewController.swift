@@ -26,24 +26,6 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         configureView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // MARK: add observer when view appear
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil, queue: OperationQueue.main) { (notification) in
-            self.refreshControl?.endRefreshing()
-            self.activityIndicator?.stopAnimating()
-            self.tableView.reloadData()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // MARK: remove observer when view disppear
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
-    }
-    
     // MARK: - functions
     private func configureView(){
         let width = view.bounds.size.width
@@ -66,7 +48,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         
         // MARK: 3. setup refreshControl for further weather request
         refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(requestWeathers), for: .valueChanged)
+        refreshControl?.addTarget(self, action: #selector(requestWeatherForCities), for: .valueChanged)
         
         // MARK: 4. setup activity indicator
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -84,7 +66,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         // MARK: 6. initialize collection [City] and load city weathers
         cities = [City]()
         units = Units.metric
-        requestWeatherForCityIndex()
+        requestWeatherForCities()
     }
     
     @IBAction func didTapAdd(sender: UIBarButtonItem){
@@ -125,30 +107,24 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
             }
         })
     }
-    
-    @objc private func requestWeathers(sender: AnyObject?){
-        requestWeatherForCityIndex()
-    }
 
-    private func requestWeatherForCityIndex(){
-        // MARK: recursing for update weather for cities
+    @objc private func requestWeatherForCities(){
+        
         let queue = DispatchQueue(label: "weatherRequest")
         var totalRequest = 0
         
         for cityID in self.cityIDs{
-            //weak let controller : WeatherTableViewController? = self
-            queue.async(execute: { 
-                weak var controller : WeatherTableViewController? = self
-                
-                let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: self.units!)
+            queue.async(execute: { [weak self] in
+
+                let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: self!.units!)
                 weatherClient.requestWeather(cityId: cityID, onComplete: { (city) in
                     if city != nil{
-                        if controller?.cities!.contains(city!) == false{
+                        if self?.cities!.contains(city!) == false{
                             // MARK: if city collection doesn't contain object, then add to collection
-                            controller?.cities!.append(city!)
+                            self?.cities!.append(city!)
                         }else{
                             // MARK: otherwise, update city's current weather
-                            if let existCity = controller?.cities!.filter({ (obj) -> Bool in
+                            if let existCity = self?.cities!.filter({ (obj) -> Bool in
                                 return city == obj
                             }){
                                 existCity[0].currentWeather = city!.currentWeather
@@ -156,13 +132,12 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
                         }
 
                         DispatchQueue.main.async {
-                            controller?.tableView.reloadData()
-                            
+                            self?.tableView.reloadData()
                             totalRequest += 1
                             
-                            if totalRequest == (controller?.cityIDs.count)! - 1{
-                                controller?.refreshControl?.endRefreshing()
-                                controller?.activityIndicator?.stopAnimating()
+                            if totalRequest == (self?.cityIDs.count)! - 1{
+                                self?.refreshControl?.endRefreshing()
+                                self?.activityIndicator?.stopAnimating()
                             }
                         }
                     }
@@ -228,7 +203,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
             break
         }
         // MARK: change unit between Metric and Imperial, and make a request to update data
-        requestWeatherForCityIndex()
+        requestWeatherForCities()
     }
 
     // MARK: - Table view data source
