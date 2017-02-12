@@ -25,6 +25,7 @@
 		7BEF656E1E38AEFC005C7BD4 /* GoogleMapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */; };
 		7BEF65701E3957A4005C7BD4 /* DailyForecastClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF656F1E3957A4005C7BD4 /* DailyForecastClient.swift */; };
 		7BEF65721E39A1DC005C7BD4 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEF65711E39A1DC005C7BD4 /* Weather.swift */; };
+		7BFAA9261E4DB6830078CBD9 /* WeatherTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAA9251E4DB6830078CBD9 /* WeatherTableHeaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		7BEF656D1E38AEFC005C7BD4 /* GoogleMapClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleMapClient.swift; sourceTree = "<group>"; };
 		7BEF656F1E3957A4005C7BD4 /* DailyForecastClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DailyForecastClient.swift; sourceTree = "<group>"; };
 		7BEF65711E39A1DC005C7BD4 /* Weather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		7BFAA9251E4DB6830078CBD9 /* WeatherTableHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherTableHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				7BA56CE91E361942003B82D2 /* WeatherDetailUIView.swift */,
+				7BFAA9251E4DB6830078CBD9 /* WeatherTableHeaderView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				7BA56CEA1E361942003B82D2 /* WeatherDetailUIView.swift in Sources */,
 				7BEF65701E3957A4005C7BD4 /* DailyForecastClient.swift in Sources */,
 				7BA56CE81E361311003B82D2 /* CityWeatherViewController.swift in Sources */,
+				7BFAA9261E4DB6830078CBD9 /* WeatherTableHeaderView.swift in Sources */,
 				7BEF65721E39A1DC005C7BD4 /* Weather.swift in Sources */,
 				7BEF65681E385779005C7BD4 /* WeatherConditionClient.swift in Sources */,
 				7BEF656C1E389F1F005C7BD4 /* Constant.swift in Sources */,

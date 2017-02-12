@@ -20,6 +20,15 @@ Submission:
 - Creaet a public project in GitHub or BitBucket and send the link back to us for review.
 ##############################
 
+##############################
+Issues need to fixed
+
+- 1. use optional check in condition, don't use '=nil'
+- 2. replace measurement 'uiscreen.main.bounds' with 'view.bounds'
+- 3. create customized view
+
+##############################
+
 
 ##############################
 Development notes
@@ -42,4 +51,6 @@ About the project:
 - 3. OpenWeatherMap also provides a group weather request service, but sometimes it's really slow. so I choose the webservice to request city weather one by one.
 - 4. I add a segment control for user. so the user can switch the unit system between Metric and Imperial.
 ##############################
+
+
 

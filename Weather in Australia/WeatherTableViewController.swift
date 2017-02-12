@@ -12,29 +12,33 @@ import CoreLocation
 class WeatherTableViewController: UITableViewController, CLLocationManagerDelegate {
 
     // MARK: - properties
-    private let locationManager = CLLocationManager()
+    private var locationManager : CLLocationManager?
     private var cities : [City]?
     private let cityIDs = [4163971, 2147714, 2174003, 2158177]//2158177 city ID for Melbourne, AU
     private var activityIndicator : UIActivityIndicatorView?
     private var currenctLocation : CLLocationCoordinate2D?
-    private var units : Units? // for the OpenWeatherMap request, default value if metric
+    private var units : Units? // for the OpenWeatherMap request, default value is metric
 
     // MARK: - view life circle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let width = view.bounds.size.width
+        let height = view.bounds.size.height
         
         // MARK: 1. add bar button to add local weather
         let addLocalButton = UIBarButtonItem(title: "Local", style: .plain, target: self, action: #selector(didTapAdd))
         navigationItem.rightBarButtonItems = [addLocalButton]
         
         // MARK: 2. setup CLLocationManager
-        locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
+        locationManager = CLLocationManager()
+        locationManager?.requestAlwaysAuthorization()
+        locationManager?.requestWhenInUseAuthorization()
         
         if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-            locationManager.startUpdatingLocation()
+            locationManager?.delegate = self
+            locationManager?.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+            locationManager?.startUpdatingLocation()
         }
         
         // MARK: 3. setup refreshControl for further weather request
@@ -43,12 +47,11 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         
         // MARK: 4. setup activity indicator
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        activityIndicator?.center = CGPoint(x: UIScreen.main.bounds.size.width / 2.0, y: UIScreen.main.bounds.size.height / 2.0)
+        activityIndicator?.center = CGPoint(x: width / 2.0, y: height / 2.0)
         view.addSubview(activityIndicator!)
         activityIndicator?.startAnimating()
         
         // MARK: 5. add segment
-        let width = UIScreen.main.bounds.size.width
         let segment = UISegmentedControl(items: ["\(UnitTemperature.celsius.symbol)", "\(UnitTemperature.fahrenheit.symbol)"])
         segment.frame = CGRect(x: 0, y: 0, width: width * 0.5, height: 30)
         segment.selectedSegmentIndex = 0
@@ -58,7 +61,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         // MARK: 6. initialize collection [City] and load city weathers
         cities = [City]()
         units = Units.metric
-        requestWeatherForCityIndex(index: 0)
+        requestWeatherForCityIndex()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,11 +85,17 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     // MARK: - functions
     @IBAction func didTapAdd(sender: UIBarButtonItem){
         // MARK: request current location weather
+        guard currenctLocation != nil else{
+            return
+        }
         if currenctLocation != nil{
             let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
             weatherClient.requestWeatherForCurrentLocation(location: currenctLocation!, onComplete: { (city) in
-                if city != nil && self.cities!.contains(city!) == false{
-                    self.cities!.append(city!)
+                guard let city = city else{
+                    return
+                }
+                if self.cities?.contains(city) == false{
+                    self.cities?.append(city)
                     OperationQueue.main.addOperation({ 
                         self.tableView.reloadData()
                     })
@@ -99,8 +108,12 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
         // MARK: request weather by city name
         let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: Units.metric)
         weatherClient.requestWeatherForCity(name: "Shenyang,cn", onComplete: { (city) in
-            if city != nil && self.cities!.contains(city!) == false{
-                self.cities!.append(city!)
+            guard let city = city else{
+                return
+            }
+            
+            if self.cities?.contains(city) == false{
+                self.cities?.append(city)
                 OperationQueue.main.addOperation({
                     self.tableView.reloadData()
                 })
@@ -109,34 +122,39 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     }
     
     @objc private func requestWeathers(sender: AnyObject?){
-        requestWeatherForCityIndex(index: 0)
+        requestWeatherForCityIndex()
     }
 
-    private func requestWeatherForCityIndex(index: Int){
+    private func requestWeatherForCityIndex(){
         // MARK: recursing for update weather for cities
-        if index < cityIDs.count{
-            let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: units!)
-            weatherClient.requestWeather(cityId: cityIDs[index], onComplete: { (city) in
-                if city != nil{
-                    if self.cities!.contains(city!) == false{
-                        // MARK: if city collection doesn't contain object, then add to collection
-                        self.cities!.append(city!)
-                    }else{
-                        // MARK: otherwise, update city's current weather
-                        let existCity = self.cities!.filter({ (obj) -> Bool in
-                            return city == obj
-                        })
-                        
-                        if existCity.count == 1{
-                            existCity[0].currentWeather = city!.currentWeather
+        for cityID in cityIDs{
+            let queue = OperationQueue()
+            weak var controller : WeatherTableViewController? = self
+            queue.addOperation({ 
+                let weatherClient = CurrentWeatherClient(urlString: "\(OpenWeatherMapService.currentWeather.rawValue)", appID: "\(ServiceKey.OpenWeatherMap.rawValue)", units: self.units!)
+                weatherClient.requestWeather(cityId: cityID, onComplete: { (city) in
+                    if city != nil{
+                        if controller?.cities!.contains(city!) == false{
+                            // MARK: if city collection doesn't contain object, then add to collection
+                            controller?.cities!.append(city!)
+                        }else{
+                            // MARK: otherwise, update city's current weather
+                            if let existCity = controller?.cities!.filter({ (obj) -> Bool in
+                                return city == obj
+                            }){
+                                existCity[0].currentWeather = city!.currentWeather
+                            }
                         }
+                        
+                        OperationQueue.main.addOperation({ 
+                            controller?.tableView.reloadData()
+                            print(queue.operationCount)
+                        })
                     }
-                }
-                self.requestWeatherForCityIndex(index: index + 1)
+                })
             })
-        }else{
-            // MARK: when finish update, post a notification to stop activity indicator
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "\(WeatherNotification.WeatherLoadingFinish)"), object: nil)
+            
+            queue.waitUntilAllOperationsAreFinished()
         }
     }
     
@@ -197,7 +215,7 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
             break
         }
         // MARK: change unit between Metric and Imperial, and make a request to update data
-        requestWeatherForCityIndex(index: 0)
+        requestWeatherForCityIndex()
     }
 
     // MARK: - Table view data source
@@ -206,7 +224,10 @@ class WeatherTableViewController: UITableViewController, CLLocationManagerDelega
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cities != nil ? cities!.count : 0
+        guard let rows = cities?.count else {
+            return 0
+        }
+        return rows
     }
 
     // MARK: - Table view delegates
